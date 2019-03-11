@@ -16,78 +16,80 @@ namespace DamageEvents
         public DamageEvents()
         {
             EventHandlers.Add("gameEventTriggered", new Action<string, dynamic>(GameEventTriggered));
-
-            EventHandlers.Add(eventName + ":VehicleDestroyed", new Action<int, int, uint, bool, int>((a, b, c, d, e) =>
+            if (GetResourceMetadata(GetCurrentResourceName(), "enable_debug_prints_for_events", 0).ToLower() == "true")
             {
-                Debug.WriteLine("event: VehicleDestroyed");
-                Debug.WriteLine($"vehicle: {a}");
-                Debug.WriteLine($"attacker: {b}");
-                Debug.WriteLine($"weapon hash: {c}");
-                Debug.WriteLine($"was melee damage?: {d}");
-                Debug.WriteLine($"vehicle damage flag: {e}");
-            }));
-            EventHandlers.Add(eventName + ":PedKilledByPlayer", new Action<int, int, uint, bool>((a, b, c, d) =>
-            {
-                Debug.WriteLine("event: PedKilledByPlayer");
-                Debug.WriteLine($"victim: {a}");
-                Debug.WriteLine($"player: {b}");
-                Debug.WriteLine($"weapon hash: {c}");
-                Debug.WriteLine($"was melee damage?: {d}");
-            }));
-            EventHandlers.Add(eventName + ":PedKilledByPed", new Action<int, int, uint, bool>((a, b, c, d) =>
-            {
-                Debug.WriteLine("event: PedKilledByPed");
-                Debug.WriteLine($"victim: {a}");
-                Debug.WriteLine($"attacker: {b}");
-                Debug.WriteLine($"weapon hash: {c}");
-                Debug.WriteLine($"was melee damage?: {d}");
-            }));
-            EventHandlers.Add(eventName + ":PedKilledByVehicleWithDriver", new Action<int, int, int>((a, b, c) =>
-            {
-                Debug.WriteLine("event: PedKilledByVehicleWithDriver");
-                Debug.WriteLine($"victim: {a}");
-                Debug.WriteLine($"driver of vehicle: {b}");
-                Debug.WriteLine($"vehicle: {c}");
-            }));
-            EventHandlers.Add(eventName + ":PedKilledByVehicle", new Action<int, int>((a, b) =>
-            {
-                Debug.WriteLine("event: PedKilledByVehicle");
-                Debug.WriteLine($"victim: {a}");
-                Debug.WriteLine($"vehicle: {b}");
-            }));
-            EventHandlers.Add(eventName + ":PedDied", new Action<int, int, uint, bool>((a, b, c, d) =>
-            {
-                Debug.WriteLine("event: PedDied");
-                Debug.WriteLine($"victim: {a}");
-                Debug.WriteLine($"attacker: {b}");
-                Debug.WriteLine($"weapon hash: {c}");
-                Debug.WriteLine($"was melee damage?: {d}");
-            }));
-            EventHandlers.Add(eventName + ":EntityKilled", new Action<int, int, uint, bool>((a, b, c, d) =>
-            {
-                Debug.WriteLine("event: EntityKilled");
-                Debug.WriteLine($"victim: {a}");
-                Debug.WriteLine($"attacker: {b}");
-                Debug.WriteLine($"weapon hash: {c}");
-                Debug.WriteLine($"was melee damage?: {d}");
-            }));
-            EventHandlers.Add(eventName + ":VehicleDamaged", new Action<int, int, uint, bool, int>((a, b, c, d, e) =>
-            {
-                Debug.WriteLine("event: VehicleDamaged");
-                Debug.WriteLine($"vehicle: {a}");
-                Debug.WriteLine($"attacker: {b}");
-                Debug.WriteLine($"weapon hash: {c}");
-                Debug.WriteLine($"was melee damage?: {d}");
-                Debug.WriteLine($"vehicle damage flag: {e}");
-            }));
-            EventHandlers.Add(eventName + ":EntityDamaged", new Action<int, int, uint, bool>((a, b, c, d) =>
-            {
-                Debug.WriteLine("event: EntityDamaged");
-                Debug.WriteLine($"victim: {a}");
-                Debug.WriteLine($"attacker: {b}");
-                Debug.WriteLine($"weapon hash: {c}");
-                Debug.WriteLine($"was melee damage?: {d}");
-            }));
+                EventHandlers.Add(eventName + ":VehicleDestroyed", new Action<int, int, uint, bool, int>((a, b, c, d, e) =>
+                {
+                    Debug.WriteLine("event: VehicleDestroyed");
+                    Debug.WriteLine($"vehicle: {a}");
+                    Debug.WriteLine($"attacker: {b}");
+                    Debug.WriteLine($"weapon hash: {c}");
+                    Debug.WriteLine($"was melee damage?: {d}");
+                    Debug.WriteLine($"vehicle damage flag: {e}");
+                }));
+                EventHandlers.Add(eventName + ":PedKilledByPlayer", new Action<int, int, uint, bool>((a, b, c, d) =>
+                {
+                    Debug.WriteLine("event: PedKilledByPlayer");
+                    Debug.WriteLine($"victim: {a}");
+                    Debug.WriteLine($"player: {b}");
+                    Debug.WriteLine($"weapon hash: {c}");
+                    Debug.WriteLine($"was melee damage?: {d}");
+                }));
+                EventHandlers.Add(eventName + ":PedKilledByPed", new Action<int, int, uint, bool>((a, b, c, d) =>
+                {
+                    Debug.WriteLine("event: PedKilledByPed");
+                    Debug.WriteLine($"victim: {a}");
+                    Debug.WriteLine($"attacker: {b}");
+                    Debug.WriteLine($"weapon hash: {c}");
+                    Debug.WriteLine($"was melee damage?: {d}");
+                }));
+                EventHandlers.Add(eventName + ":PedKilledByVehicleWithDriver", new Action<int, int, int>((a, b, c) =>
+                {
+                    Debug.WriteLine("event: PedKilledByVehicleWithDriver");
+                    Debug.WriteLine($"victim: {a}");
+                    Debug.WriteLine($"driver of vehicle: {b}");
+                    Debug.WriteLine($"vehicle: {c}");
+                }));
+                EventHandlers.Add(eventName + ":PedKilledByVehicle", new Action<int, int>((a, b) =>
+                {
+                    Debug.WriteLine("event: PedKilledByVehicle");
+                    Debug.WriteLine($"victim: {a}");
+                    Debug.WriteLine($"vehicle: {b}");
+                }));
+                EventHandlers.Add(eventName + ":PedDied", new Action<int, int, uint, bool>((a, b, c, d) =>
+                {
+                    Debug.WriteLine("event: PedDied");
+                    Debug.WriteLine($"victim: {a}");
+                    Debug.WriteLine($"attacker: {b}");
+                    Debug.WriteLine($"weapon hash: {c}");
+                    Debug.WriteLine($"was melee damage?: {d}");
+                }));
+                EventHandlers.Add(eventName + ":EntityKilled", new Action<int, int, uint, bool>((a, b, c, d) =>
+                {
+                    Debug.WriteLine("event: EntityKilled");
+                    Debug.WriteLine($"victim: {a}");
+                    Debug.WriteLine($"attacker: {b}");
+                    Debug.WriteLine($"weapon hash: {c}");
+                    Debug.WriteLine($"was melee damage?: {d}");
+                }));
+                EventHandlers.Add(eventName + ":VehicleDamaged", new Action<int, int, uint, bool, int>((a, b, c, d, e) =>
+                {
+                    Debug.WriteLine("event: VehicleDamaged");
+                    Debug.WriteLine($"vehicle: {a}");
+                    Debug.WriteLine($"attacker: {b}");
+                    Debug.WriteLine($"weapon hash: {c}");
+                    Debug.WriteLine($"was melee damage?: {d}");
+                    Debug.WriteLine($"vehicle damage flag: {e}");
+                }));
+                EventHandlers.Add(eventName + ":EntityDamaged", new Action<int, int, uint, bool>((a, b, c, d) =>
+                {
+                    Debug.WriteLine("event: EntityDamaged");
+                    Debug.WriteLine($"victim: {a}");
+                    Debug.WriteLine($"attacker: {b}");
+                    Debug.WriteLine($"weapon hash: {c}");
+                    Debug.WriteLine($"was melee damage?: {d}");
+                }));
+            }
         }
 
         /// <summary>

@@ -1,2 +1,2 @@
 
-Copyright (C) 2019 
+Copyright © Tom Grobbe 2019 
