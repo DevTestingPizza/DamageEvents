@@ -19,6 +19,8 @@ There is an option in the `__resource.lua` file that allows you to turn on debug
 
 There are 8 events in total, all of which have been documented below.
 
+All events are triggered on the **CLIENT SIDE** only, there is no server side events with network ID's (yet).
+
 Note, only one event will be triggered for every game event. Only the one that's most appropriate in any given situation will be used.
 
 For example, if a player kills a ped, only the `DamageEvents:PedKilledByPlayer` event will be triggered, events like `DamageEvents:PedDied` or `DamageEvents:EntityKilled` will not be triggered in that case.
