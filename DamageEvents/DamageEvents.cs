@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CitizenFX.Core;
 using static CitizenFX.Core.Native.API;
-using System.Dynamic;
 
 namespace DamageEvents
 {
@@ -15,7 +11,7 @@ namespace DamageEvents
         public const string eventName = "DamageEvents";
         public DamageEvents()
         {
-            EventHandlers.Add("gameEventTriggered", new Action<string, dynamic>(GameEventTriggered));
+            EventHandlers.Add("gameEventTriggered", new Action<string, List<Object>>(GameEventTriggered));
             if (GetResourceMetadata(GetCurrentResourceName(), "enable_debug_prints_for_events", 0).ToLower() == "true")
             {
                 EventHandlers.Add(eventName + ":VehicleDestroyed", new Action<int, int, uint, bool, int>((a, b, c, d, e) =>
@@ -26,6 +22,12 @@ namespace DamageEvents
                     Debug.WriteLine($"weapon hash: {c}");
                     Debug.WriteLine($"was melee damage?: {d}");
                     Debug.WriteLine($"vehicle damage flag: {e}");
+                }));
+                EventHandlers.Add(eventName + ":PedKilledByVehicle", new Action<int, int>((a, b) =>
+                {
+                    Debug.WriteLine("event: PedKilledByVehicle");
+                    Debug.WriteLine($"victim: {a}");
+                    Debug.WriteLine($"vehicle: {b}");
                 }));
                 EventHandlers.Add(eventName + ":PedKilledByPlayer", new Action<int, int, uint, bool>((a, b, c, d) =>
                 {
@@ -42,19 +44,6 @@ namespace DamageEvents
                     Debug.WriteLine($"attacker: {b}");
                     Debug.WriteLine($"weapon hash: {c}");
                     Debug.WriteLine($"was melee damage?: {d}");
-                }));
-                EventHandlers.Add(eventName + ":PedKilledByVehicleWithDriver", new Action<int, int, int>((a, b, c) =>
-                {
-                    Debug.WriteLine("event: PedKilledByVehicleWithDriver");
-                    Debug.WriteLine($"victim: {a}");
-                    Debug.WriteLine($"driver of vehicle: {b}");
-                    Debug.WriteLine($"vehicle: {c}");
-                }));
-                EventHandlers.Add(eventName + ":PedKilledByVehicle", new Action<int, int>((a, b) =>
-                {
-                    Debug.WriteLine("event: PedKilledByVehicle");
-                    Debug.WriteLine($"victim: {a}");
-                    Debug.WriteLine($"vehicle: {b}");
                 }));
                 EventHandlers.Add(eventName + ":PedDied", new Action<int, int, uint, bool>((a, b, c, d) =>
                 {
@@ -106,6 +95,16 @@ namespace DamageEvents
         }
 
         /// <summary>
+        /// Event gets triggered whenever a ped was killed by a vehicle without a driver.
+        /// </summary>
+        /// <param name="ped">Ped that got killed.</param>
+        /// <param name="vehicle">Vehicle that was used to kill the ped.</param>
+        private void PedKilledByVehicle(int ped, int vehicle)
+        {
+            TriggerEvent(eventName + ":PedKilledByVehicle", ped, vehicle);
+        }
+
+        /// <summary>
         /// Event gets triggered whenever a ped is killed by a player.
         /// </summary>
         /// <param name="ped">The ped that got killed.</param>
@@ -127,27 +126,6 @@ namespace DamageEvents
         private void PedKilledByPed(int ped, int attackerPed, uint weaponHash, bool isMeleeDamage)
         {
             TriggerEvent(eventName + ":PedKilledByPed", ped, attackerPed, weaponHash, isMeleeDamage);
-        }
-
-        /// <summary>
-        /// Event gets triggered whenever a ped was killed by another ped using a vehicle.
-        /// </summary>
-        /// <param name="ped">Ped that got killed.</param>
-        /// <param name="driver">Last ped to be in the driver seat of the vehicle used to kill the ped.</param>
-        /// <param name="vehicle">The vehicle used to kill the ped.</param>
-        private void PedKilledByVehicleWithDriver(int ped, int driver, int vehicle)
-        {
-            TriggerEvent(eventName + ":PedKilledByVehicleWithDriver", ped, driver, vehicle);
-        }
-
-        /// <summary>
-        /// Event gets triggered whenever a ped was killed by a vehicle without a driver.
-        /// </summary>
-        /// <param name="ped">Ped that got killed.</param>
-        /// <param name="vehicle">Vehicle that was used to kill the ped.</param>
-        private void PedKilledByVehicle(int ped, int vehicle)
-        {
-            TriggerEvent(eventName + ":PedKilledByVehicle", ped, vehicle);
         }
 
         /// <summary>
@@ -200,24 +178,21 @@ namespace DamageEvents
         }
 
 
-
-
-
         /// <summary>
         /// Used internally to trigger the other events.
         /// </summary>
         /// <param name="eventName"></param>
         /// <param name="data"></param>
-        private void GameEventTriggered(string eventName, dynamic data)
+        private void GameEventTriggered(string eventName, List<Object> data)
         {
             if (eventName == "CEventNetworkEntityDamage")
             {
-                Entity victim = Entity.FromHandle(data[0]);
-                Entity attacker = Entity.FromHandle(data[1]);
-                bool victimDied = data[3] == 1;
-                uint weaponHash = (uint)data[4];
-                bool isMeleeDamage = data[9] != 0;
-                int vehicleDamageTypeFlag = data[10];
+                Entity victim = Entity.FromHandle(int.Parse(data[0].ToString()));
+                Entity attacker = Entity.FromHandle(int.Parse(data[1].ToString()));
+                bool victimDied = int.Parse(data[3].ToString()) == 1;
+                uint weaponHash = (uint)int.Parse(data[4].ToString());
+                bool isMeleeDamage = int.Parse(data[9].ToString()) != 0;
+                int vehicleDamageTypeFlag = int.Parse(data[10].ToString());
 
                 if (victim != null && attacker != null)
                 {
@@ -236,7 +211,11 @@ namespace DamageEvents
                             // victim is a ped
                             if (victim is Ped ped)
                             {
-                                if (attacker is Ped p)
+                                if (attacker is Vehicle veh)
+                                {
+                                    PedKilledByVehicle(victim.Handle, attacker.Handle);
+                                }
+                                else if (attacker is Ped p)
                                 {
                                     if (p.IsPlayer)
                                     {
@@ -246,18 +225,6 @@ namespace DamageEvents
                                     else
                                     {
                                         PedKilledByPed(victim.Handle, attacker.Handle, weaponHash, isMeleeDamage);
-                                    }
-                                }
-                                else if (attacker is Vehicle veh)
-                                {
-                                    int lastDriver = GetLastPedInVehicleSeat(veh.Handle, -1);
-                                    if (DoesEntityExist(lastDriver))
-                                    {
-                                        PedKilledByVehicleWithDriver(victim.Handle, lastDriver, attacker.Handle);
-                                    }
-                                    else
-                                    {
-                                        PedKilledByVehicle(victim.Handle, attacker.Handle);
                                     }
                                 }
                                 else

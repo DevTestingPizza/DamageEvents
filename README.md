@@ -8,12 +8,16 @@ This resource provides events for pretty much all entity related damage or death
 ## <i class="fas fa-download"></i> Download
 You can download it [**here**](https://github.com/TomGrobbe/damageevents/releases/latest).
 
+----
+
+## <i class="fas fa-wrench"></i> Debugging
+There is an option in the `__resource.lua` file that allows you to turn on debug prints. This will print all triggered events to the F8 console. Note that you should disable this on your live server because it does reduce performance, and it just spams the console and client log of your users.
 
 ----
 
 ## <i class="far fa-list-alt"></i> Events reference
 
-There are 9 events in total, all of which have been documented below.
+There are 8 events in total, all of which have been documented below.
 
 Note, only one event will be triggered for every game event. Only the one that's most appropriate in any given situation will be used.
 
@@ -36,6 +40,21 @@ Event gets triggered whenever a vehicle is destroyed.
 |uint|weaponHash|The weapon hash that was used to destroy the vehicle.|
 |bool|isMeleeDamage|True if the damage dealt was using any melee weapon (including unarmed).|
 |int|vehicleDamageTypeFlag|Vehicle damage type flag, 93 is vehicle tires damaged, others unknown.|
+
+----
+
+## `DamageEvents:PedKilledByVehicle`
+
+**Description**
+
+Event gets triggered whenever a ped was killed by a vehicle without a driver.
+
+**Parameters**
+
+|Type|Name|Description|
+|:---|:---|:----------|
+|int|ped|Ped that got killed.|
+|int|vehicle|Vehicle that was used to kill the ped.|
 
 ----
 
@@ -70,37 +89,6 @@ Event gets triggered whenever a ped is killed by another (non-player) ped.
 |int|attackerPed|Ped that killed the victim ped.|
 |uint|weaponHash|Weapon hash used to kill the ped.|
 |bool|isMeleeDamage|True if the ped was killed using a melee weapon (including unarmed).|
-
-----
-
-## `DamageEvents:PedKilledByVehicleWithDriver`
-
-**Description**
-
-Event gets triggered whenever a ped was killed by another ped using a vehicle.
-
-**Parameters**
-
-|Type|Name|Description|
-|:---|:---|:----------|
-|int|ped|Ped that got killed.|
-|int|driverPed|Last ped to be in the driver seat of the vehicle used to kill the ped.|
-|int|vehicle|The vehicle used to kill the ped.|
-
-----
-
-## `DamageEvents:PedKilledByVehicle`
-
-**Description**
-
-Event gets triggered whenever a ped was killed by a vehicle without a driver.
-
-**Parameters**
-
-|Type|Name|Description|
-|:---|:---|:----------|
-|int|ped|Ped that got killed.|
-|int|vehicle|Vehicle that was used to kill the ped.|
 
 ----
 
