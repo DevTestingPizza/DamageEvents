@@ -2,24 +2,25 @@
 
 This resource provides events for pretty much all entity related damage or death events by listening to the `gameEventTriggered` event, taking the data and triggering new events based on that game event data.
 
-
 ----
 
-## <i class="fas fa-download"></i> Download
+## Download
+
 You can download it [**here**](https://github.com/TomGrobbe/damageevents/releases/latest).
 
 ----
 
-## <i class="fas fa-wrench"></i> Debugging
-There is an option in the `__resource.lua` file that allows you to turn on debug prints. This will print all triggered events to the F8 console. Note that you should disable this on your live server because it does reduce performance, and it just spams the console and client log of your users.
+## Debugging
+
+There is an option in the `fxmanifest.lua` file that allows you to turn on debug prints. This will print all triggered events to the F8 console. Note that you should disable this on your live server because it does reduce performance, and it just spams the console and client log of your users.
 
 ----
 
-## <i class="far fa-list-alt"></i> Events reference
+## Events reference
 
 There are 8 events in total, all of which have been documented below.
 
-All events are triggered on the **CLIENT SIDE** only, there is no server side events with network ID's (yet).
+All events are triggered on the **CLIENT SIDE** only, there is no server side events with network ID's.
 
 Note, only one event will be triggered for every game event. Only the one that's most appropriate in any given situation will be used.
 
@@ -144,7 +145,6 @@ Event gets triggered whenever a vehicle is damaged, but not destroyed.
 |bool|isMeleeDamage|True whenever the ped was killed using a melee weapon (including unarmed).|
 |int|vehicleDamageTypeFlag|Vehicle damage type flag, 93 is vehicle tire damage, others are unknown.|
 
-
 ----
 
 ## `DamageEvents:EntityDamaged`
@@ -161,6 +161,3 @@ Event gets triggered whenever an entity is damaged but hasn't died from the dama
 |int|attacker|The attacker that damaged the entity.|
 |uint|weaponHash|The weapon hash used to damage the entity.|
 |bool|isMeleeDamage|True whenever the ped was killed using a melee weapon (including unarmed).|
-
-----
-

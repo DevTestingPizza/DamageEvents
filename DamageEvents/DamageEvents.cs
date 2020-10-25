@@ -8,76 +8,16 @@ namespace DamageEvents
     public class DamageEvents : BaseScript
     {
 
-        public const string eventName = "DamageEvents";
-        public DamageEvents()
+        private const string eventName = "DamageEvents";
+        private bool debug = GetResourceMetadata(GetCurrentResourceName(), "enable_debug_prints_for_events", 0).ToLower() == "true";
+
+        public DamageEvents() { }
+
+        private void Log(string message)
         {
-            EventHandlers.Add("gameEventTriggered", new Action<string, List<Object>>(GameEventTriggered));
-            if (GetResourceMetadata(GetCurrentResourceName(), "enable_debug_prints_for_events", 0).ToLower() == "true")
+            if (debug)
             {
-                EventHandlers.Add(eventName + ":VehicleDestroyed", new Action<int, int, uint, bool, int>((a, b, c, d, e) =>
-                {
-                    Debug.WriteLine("event: VehicleDestroyed");
-                    Debug.WriteLine($"vehicle: {a}");
-                    Debug.WriteLine($"attacker: {b}");
-                    Debug.WriteLine($"weapon hash: {c}");
-                    Debug.WriteLine($"was melee damage?: {d}");
-                    Debug.WriteLine($"vehicle damage flag: {e}");
-                }));
-                EventHandlers.Add(eventName + ":PedKilledByVehicle", new Action<int, int>((a, b) =>
-                {
-                    Debug.WriteLine("event: PedKilledByVehicle");
-                    Debug.WriteLine($"victim: {a}");
-                    Debug.WriteLine($"vehicle: {b}");
-                }));
-                EventHandlers.Add(eventName + ":PedKilledByPlayer", new Action<int, int, uint, bool>((a, b, c, d) =>
-                {
-                    Debug.WriteLine("event: PedKilledByPlayer");
-                    Debug.WriteLine($"victim: {a}");
-                    Debug.WriteLine($"player: {b}");
-                    Debug.WriteLine($"weapon hash: {c}");
-                    Debug.WriteLine($"was melee damage?: {d}");
-                }));
-                EventHandlers.Add(eventName + ":PedKilledByPed", new Action<int, int, uint, bool>((a, b, c, d) =>
-                {
-                    Debug.WriteLine("event: PedKilledByPed");
-                    Debug.WriteLine($"victim: {a}");
-                    Debug.WriteLine($"attacker: {b}");
-                    Debug.WriteLine($"weapon hash: {c}");
-                    Debug.WriteLine($"was melee damage?: {d}");
-                }));
-                EventHandlers.Add(eventName + ":PedDied", new Action<int, int, uint, bool>((a, b, c, d) =>
-                {
-                    Debug.WriteLine("event: PedDied");
-                    Debug.WriteLine($"victim: {a}");
-                    Debug.WriteLine($"attacker: {b}");
-                    Debug.WriteLine($"weapon hash: {c}");
-                    Debug.WriteLine($"was melee damage?: {d}");
-                }));
-                EventHandlers.Add(eventName + ":EntityKilled", new Action<int, int, uint, bool>((a, b, c, d) =>
-                {
-                    Debug.WriteLine("event: EntityKilled");
-                    Debug.WriteLine($"victim: {a}");
-                    Debug.WriteLine($"attacker: {b}");
-                    Debug.WriteLine($"weapon hash: {c}");
-                    Debug.WriteLine($"was melee damage?: {d}");
-                }));
-                EventHandlers.Add(eventName + ":VehicleDamaged", new Action<int, int, uint, bool, int>((a, b, c, d, e) =>
-                {
-                    Debug.WriteLine("event: VehicleDamaged");
-                    Debug.WriteLine($"vehicle: {a}");
-                    Debug.WriteLine($"attacker: {b}");
-                    Debug.WriteLine($"weapon hash: {c}");
-                    Debug.WriteLine($"was melee damage?: {d}");
-                    Debug.WriteLine($"vehicle damage flag: {e}");
-                }));
-                EventHandlers.Add(eventName + ":EntityDamaged", new Action<int, int, uint, bool>((a, b, c, d) =>
-                {
-                    Debug.WriteLine("event: EntityDamaged");
-                    Debug.WriteLine($"victim: {a}");
-                    Debug.WriteLine($"attacker: {b}");
-                    Debug.WriteLine($"weapon hash: {c}");
-                    Debug.WriteLine($"was melee damage?: {d}");
-                }));
+                Debug.WriteLine($"[{GetCurrentResourceName()}] {message}");
             }
         }
 
@@ -92,6 +32,7 @@ namespace DamageEvents
         private void VehicleDestroyed(int vehicle, int attacker, uint weaponHash, bool isMeleeDamage, int vehicleDamageTypeFlag)
         {
             TriggerEvent(eventName + ":VehicleDestroyed", vehicle, attacker, weaponHash, isMeleeDamage, vehicleDamageTypeFlag);
+            Log($"[{eventName}:VehicleDestroyed] vehicle: {vehicle}, attacker: {attacker}, weaponHash: {weaponHash}, isMeleeDamage: {isMeleeDamage}, vehicleDamageTypeFlag: {vehicleDamageTypeFlag}");
         }
 
         /// <summary>
@@ -102,6 +43,7 @@ namespace DamageEvents
         private void PedKilledByVehicle(int ped, int vehicle)
         {
             TriggerEvent(eventName + ":PedKilledByVehicle", ped, vehicle);
+            Log($"[{eventName}:PedKilledByVehicle] ped: {ped}, vehicle: {vehicle}");
         }
 
         /// <summary>
@@ -114,6 +56,7 @@ namespace DamageEvents
         private void PedKilledByPlayer(int ped, int player, uint weaponHash, bool isMeleeDamage)
         {
             TriggerEvent(eventName + ":PedKilledByPlayer", ped, player, weaponHash, isMeleeDamage);
+            Log($"[{eventName}:PedKilledByPlayer] ped: {ped}, player: {player}, weaponHash: {weaponHash}, isMeleeDamage: {isMeleeDamage}");
         }
 
         /// <summary>
@@ -126,6 +69,7 @@ namespace DamageEvents
         private void PedKilledByPed(int ped, int attackerPed, uint weaponHash, bool isMeleeDamage)
         {
             TriggerEvent(eventName + ":PedKilledByPed", ped, attackerPed, weaponHash, isMeleeDamage);
+            Log($"[{eventName}:PedKilledByPed] ped: {ped}, attackerPed: {attackerPed}, weaponHash: {weaponHash}, isMeleeDamage: {isMeleeDamage}");
         }
 
         /// <summary>
@@ -138,6 +82,7 @@ namespace DamageEvents
         private void PedDied(int ped, int attacker, uint weaponHash, bool isMeleeDamage)
         {
             TriggerEvent(eventName + ":PedDied", ped, attacker, weaponHash, isMeleeDamage);
+            Log($"[{eventName}:PedDied] ped: {ped}, attacker: {attacker}, weaponHash: {weaponHash}, isMeleeDamage: {isMeleeDamage}");
         }
 
         /// <summary>
@@ -150,6 +95,7 @@ namespace DamageEvents
         private void EntityKilled(int entity, int attacker, uint weaponHash, bool isMeleeDamage)
         {
             TriggerEvent(eventName + ":EntityKilled", entity, attacker, weaponHash, isMeleeDamage);
+            Log($"[{eventName}:EntityKilled] entity: {entity}, attacker: {attacker}, weaponHash: {weaponHash}, isMeleeDamage: {isMeleeDamage}");
         }
 
         /// <summary>
@@ -163,6 +109,7 @@ namespace DamageEvents
         private void VehicleDamaged(int vehicle, int attacker, uint weaponHash, bool isMeleeDamage, int vehicleDamageTypeFlag)
         {
             TriggerEvent(eventName + ":VehicleDamaged", vehicle, attacker, weaponHash, isMeleeDamage, vehicleDamageTypeFlag);
+            Log($"[{eventName}:VehicleDamaged] vehicle: {vehicle}, attacker: {attacker}, weaponHash: {weaponHash}, vehicleDamageTypeFlag: {vehicleDamageTypeFlag}");
         }
 
         /// <summary>
@@ -175,6 +122,7 @@ namespace DamageEvents
         private void EntityDamaged(int entity, int attacker, uint weaponHash, bool isMeleeDamage)
         {
             TriggerEvent(eventName + ":EntityDamaged", entity, attacker, weaponHash, isMeleeDamage);
+            Log($"[{eventName}:EntityDamaged] entity: {entity}, attacker: {attacker}, weaponHash: {weaponHash}, isMeleeDamage: {isMeleeDamage}");
         }
 
 
@@ -183,7 +131,8 @@ namespace DamageEvents
         /// </summary>
         /// <param name="eventName"></param>
         /// <param name="data"></param>
-        private void GameEventTriggered(string eventName, List<Object> data)
+        [EventHandler("gameEventTriggered")]
+        internal void GameEventTriggered(string eventName, List<Object> data)
         {
             if (eventName == "CEventNetworkEntityDamage")
             {
