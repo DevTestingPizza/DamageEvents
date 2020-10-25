@@ -1,17 +1,20 @@
 pull_requests:
   do_not_increment_build_number: false
-image: Visual Studio 2017
+image: Visual Studio 2019
 configuration: Release
+before_build:
+  - nuget restore
 build:
   parallel: true
   project: DamageEvents.sln
+  include_nuget_references: true
   verbosity: minimal
 after_build:
-  - cmd: copy README.md DamageEvents\bin\Release\README.md
-  - cmd: copy LICENSE.md DamageEvents\bin\Release\LICENSE.md
-  - cmd: copy __resource.lua DamageEvents\bin\Release\__resource.lua
+  - cmd: copy README.md DamageEvents\bin\Release\net452\README.md
+  - cmd: copy LICENSE.md DamageEvents\bin\Release\net452\LICENSE.md
+  - cmd: copy fxmanifest.lua DamageEvents\bin\Release\net452\fxmanifest.lua
   - cmd: if %APPVEYOR_REPO_TAG%==true (appveyor SetVariable -Name VERSION_NAME -Value %APPVEYOR_REPO_TAG_NAME%) else (appveyor SetVariable -Name VERSION_NAME -Value beta)
-  - cmd: 7z a DamageEvents-%VERSION_NAME%.zip -r DamageEvents\bin\Release\*
+  - cmd: 7z a DamageEvents-%VERSION_NAME%.zip -r DamageEvents\bin\Release\net452\*
   - cmd: appveyor PushArtifact DamageEvents-%VERSION_NAME%.zip
 deploy:
   - provider: GitHub
@@ -24,13 +27,3 @@ deploy:
     on:
       APPVEYOR_REPO_TAG: true
     description: "Damage Events version $(VERSION_NAME)."
-after_deploy:
-  - ps: if($env:APPVEYOR_REPO_TAG -eq $True) {Invoke-RestMethod https://raw.githubusercontent.com/TomGrobbe/appveyor-discord-webhook/master/send.ps1 -o send.ps1; ./send.ps1 deploy $env:WEBHOOK_URL; rm send.ps1;}
-on_success:
-  - ps: Invoke-RestMethod https://raw.githubusercontent.com/TomGrobbe/appveyor-discord-webhook/master/send.ps1 -o send.ps1
-  - ps: ./send.ps1 success $env:WEBHOOK_URL
-  - ps: rm send.ps1
-on_failure:
-  - ps: Invoke-RestMethod https://raw.githubusercontent.com/TomGrobbe/appveyor-discord-webhook/master/send.ps1 -o send.ps1
-  - ps: ./send.ps1 failure $env:WEBHOOK_URL
-  - ps: rm send.ps1
